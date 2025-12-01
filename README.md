@@ -13,14 +13,14 @@ Frontend React para o sistema de gerenciamento de festas Party Time.
 ## 📦 Instalação
 
 1. Navegue até a pasta frontend:
-\`\`\`bash
+```bash
 cd frontend
-\`\`\`
+```
 
 2. Instale as dependências:
-\`\`\`bash
+```bash
 npm install
-\`\`\`
+```
 
 3. Configure o backend:
    - Certifique-se de que o backend está rodando em `http://localhost:3000`
@@ -28,17 +28,17 @@ npm install
 
 ## 🎯 Executar o Projeto
 
-\`\`\`bash
+```bash
 npm run dev
-\`\`\`
+```
 
 O frontend estará disponível em `http://localhost:5173`
 
 ## 🏗️ Build para Produção
 
-\`\`\`bash
+```bash
 npm run build
-\`\`\`
+```
 
 Os arquivos otimizados serão gerados na pasta `dist/`
 
