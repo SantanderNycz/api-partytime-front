@@ -1,15 +1,14 @@
-const API_BASE_URL = "https://api-partytime-back.onrender.com/api"
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export const api = {
-  // Parties
   getParties: async () => {
-    const response = await fetch(`${API_BASE_URL}/parties`)
-    return response.json()
+    const response = await fetch(`${API_BASE_URL}/parties`);
+    return response.json();
   },
 
   getParty: async (id) => {
-    const response = await fetch(`${API_BASE_URL}/parties/${id}`)
-    return response.json()
+    const response = await fetch(`${API_BASE_URL}/parties/${id}`);
+    return response.json();
   },
 
   createParty: async (data) => {
@@ -17,8 +16,8 @@ export const api = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
-    })
-    return response.json()
+    });
+    return response.json();
   },
 
   updateParty: async (id, data) => {
@@ -26,26 +25,26 @@ export const api = {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
-    })
-    return response.json()
+    });
+    return response.json();
   },
 
   deleteParty: async (id) => {
     const response = await fetch(`${API_BASE_URL}/parties/${id}`, {
       method: "DELETE",
-    })
-    return response.json()
+    });
+    return response.json();
   },
 
   // Services
   getServices: async () => {
-    const response = await fetch(`${API_BASE_URL}/services`)
-    return response.json()
+    const response = await fetch(`${API_BASE_URL}/services`);
+    return response.json();
   },
 
   getService: async (id) => {
-    const response = await fetch(`${API_BASE_URL}/services/${id}`)
-    return response.json()
+    const response = await fetch(`${API_BASE_URL}/services/${id}`);
+    return response.json();
   },
 
   createService: async (data) => {
@@ -53,8 +52,8 @@ export const api = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
-    })
-    return response.json()
+    });
+    return response.json();
   },
 
   updateService: async (id, data) => {
@@ -62,14 +61,14 @@ export const api = {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
-    })
-    return response.json()
+    });
+    return response.json();
   },
 
   deleteService: async (id) => {
     const response = await fetch(`${API_BASE_URL}/services/${id}`, {
       method: "DELETE",
-    })
-    return response.json()
+    });
+    return response.json();
   },
-}
+};
