@@ -24,7 +24,6 @@ npm install
 
 3. Configure o backend:
    - Certifique-se de que o backend está rodando em `http://localhost:3000`
-   - Se necessário, ajuste a URL da API em `src/config/api.js`
 
 ## 🎯 Executar o Projeto
 
@@ -32,7 +31,7 @@ npm install
 npm run dev
 ```
 
-O frontend estará disponível em `http://localhost:5173`
+O frontend estará disponível localmente em `http://localhost:5173` e online em `api-partytime-front.vercel.app`
 
 ## 🏗️ Build para Produção
 
@@ -98,7 +97,7 @@ O design utiliza um tema escuro vibrante com cores festivas:
 
 O frontend se conecta ao backend através da configuração em `src/config/api.js`:
 
-- Base URL: `http://localhost:3000/api`
+- Base URL: `https://api-partytime-back.onrender.com/api`
 - Endpoints:
   - `/parties` - CRUD de festas
   - `/services` - CRUD de serviços
