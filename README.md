@@ -44,7 +44,7 @@ Os arquivos otimizados serão gerados na pasta `dist/`
 
 ## 📁 Estrutura do Projeto
 
-\`\`\`
+```
 frontend/
 ├── src/
 │   ├── components/     # Componentes reutilizáveis
@@ -67,7 +67,7 @@ frontend/
 ├── package.json
 ├── vite.config.js
 └── tailwind.config.js
-\`\`\`
+```
 
 ## 🎨 Funcionalidades
 
