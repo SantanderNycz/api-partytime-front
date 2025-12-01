@@ -1,234 +1,295 @@
-import { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import Layout from "../components/Layout";
+"use client";
 
-const API_URL = "https://api-partytime-back.onrender.com/api";
+import { useState, useEffect } from "react";
+import { useNavigate, useParams, Link } from "react-router-dom";
+import { ArrowLeft, Plus, X } from "lucide-react";
+import { api } from "../config/api";
 
 export default function EditParty() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [availableServices, setAvailableServices] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState("");
-  const [party, setParty] = useState({
+  const [formData, setFormData] = useState({
     title: "",
     author: "",
     description: "",
     budget: "",
     image: "",
+    services: [],
   });
 
   useEffect(() => {
-    fetchParty();
+    loadParty();
+    loadServices();
   }, [id]);
 
-  const fetchParty = async () => {
+  const loadParty = async () => {
     try {
-      setLoading(true);
-      setError("");
-      const response = await fetch(`${API_URL}/parties/${id}`);
-
-      if (!response.ok) {
-        throw new Error(`Erro ao carregar festa: ${response.status}`);
-      }
-
-      const data = await response.json();
-
-      // Ajusta os dados para o formato do formulário
-      setParty({
+      const data = await api.getParty(id);
+      setFormData({
         title: data.title || "",
         author: data.author || "",
         description: data.description || "",
         budget: data.budget || "",
         image: data.image || "",
+        services: data.services || [],
       });
-    } catch (err) {
-      console.error("Erro ao buscar festa:", err);
-      setError("Não foi possível carregar os dados da festa. Tente novamente.");
+    } catch (error) {
+      console.error("Erro ao carregar festa:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setParty((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+  const loadServices = async () => {
+    try {
+      const data = await api.getServices();
+      setAvailableServices(data);
+    } catch (error) {
+      console.error("Erro ao carregar serviços:", error);
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Validação básica
-    if (!party.title || !party.author || !party.budget) {
-      setError(
-        "Por favor, preencha todos os campos obrigatórios (título, autor e orçamento)."
-      );
-      return;
-    }
-
     try {
-      setSaving(true);
-      setError("");
-
-      // Prepara os dados para envio
       const dataToSend = {
-        title: party.title.trim(),
-        author: party.author.trim(),
-        description: party.description.trim(),
-        budget: Number(party.budget),
-        image: party.image.trim(),
+        ...formData,
+        budget: Number(formData.budget),
       };
-
-      console.log("Enviando atualização:", dataToSend);
-
-      const response = await fetch(`${API_URL}/parties/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(dataToSend),
-      });
-
-      const responseData = await response.json();
-      console.log("Resposta do servidor:", responseData);
-
-      if (!response.ok) {
-        throw new Error(
-          responseData.message || `Erro ao atualizar: ${response.status}`
-        );
-      }
-
-      // Sucesso! Redireciona para a página de detalhes
-      alert("Festa atualizada com sucesso!");
+      await api.updateParty(id, dataToSend);
       navigate(`/parties/${id}`);
-    } catch (err) {
-      console.error("Erro ao atualizar festa:", err);
-      setError(
-        err.message || "Não foi possível atualizar a festa. Tente novamente."
-      );
-    } finally {
-      setSaving(false);
+    } catch (error) {
+      console.error("Erro ao atualizar festa:", error);
+      alert("Erro ao atualizar festa. Verifique os dados e tente novamente.");
     }
+  };
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const addService = (service) => {
+    if (!formData.services.find((s) => s._id === service._id)) {
+      setFormData({
+        ...formData,
+        services: [...formData.services, service],
+      });
+    }
+  };
+
+  const removeService = (serviceId) => {
+    setFormData({
+      ...formData,
+      services: formData.services.filter((s) => s._id !== serviceId),
+    });
   };
 
   if (loading) {
     return (
-      <Layout>
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-purple-500 mx-auto mb-4"></div>
-            <p className="text-gray-400">Carregando dados da festa...</p>
-          </div>
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-[var(--color-party-purple)] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-[var(--color-text-secondary)]">Carregando...</p>
         </div>
-      </Layout>
+      </div>
     );
   }
 
   return (
-    <Layout>
-      <div className="container mx-auto px-4 py-8 max-w-2xl">
-        <h1 className="text-4xl font-bold text-center mb-8 text-purple-400">
-          Editar Festa
-        </h1>
-
-        {error && (
-          <div className="bg-red-500/20 border border-red-500 text-red-300 px-4 py-3 rounded mb-6">
-            {error}
-          </div>
-        )}
-
-        <form
-          onSubmit={handleSubmit}
-          className="bg-[#1a1a2e] rounded-lg p-6 shadow-xl"
+    <div className="max-w-3xl mx-auto space-y-6">
+      <div>
+        <Link
+          to={`/parties/${id}`}
+          className="inline-flex items-center gap-2 text-[var(--color-text-secondary)] hover:text-[var(--color-party-purple)] transition-colors mb-4"
         >
-          <div className="mb-4">
-            <label className="block text-gray-300 mb-2">
-              Título <span className="text-red-400">*</span>
+          <ArrowLeft className="w-4 h-4" />
+          Voltar
+        </Link>
+        <h1 className="text-3xl font-bold">Editar Festa</h1>
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl p-8 space-y-6">
+          <div>
+            <label className="block text-sm font-medium mb-2">
+              Título da Festa *
             </label>
             <input
               type="text"
               name="title"
-              value={party.title}
+              value={formData.title}
               onChange={handleChange}
-              className="w-full px-4 py-2 bg-[#0f0f23] border border-purple-500/30 rounded-lg text-white focus:outline-none focus:border-purple-500"
               required
+              className="w-full px-4 py-3 bg-[var(--color-background)] border border-[var(--color-border)] rounded-lg focus:outline-none focus:border-[var(--color-party-purple)] transition-colors"
             />
           </div>
 
-          <div className="mb-4">
-            <label className="block text-gray-300 mb-2">
-              Autor <span className="text-red-400">*</span>
+          <div>
+            <label className="block text-sm font-medium mb-2">
+              Organizador *
             </label>
             <input
               type="text"
               name="author"
-              value={party.author}
+              value={formData.author}
               onChange={handleChange}
-              className="w-full px-4 py-2 bg-[#0f0f23] border border-purple-500/30 rounded-lg text-white focus:outline-none focus:border-purple-500"
               required
+              className="w-full px-4 py-3 bg-[var(--color-background)] border border-[var(--color-border)] rounded-lg focus:outline-none focus:border-[var(--color-party-purple)] transition-colors"
             />
           </div>
 
-          <div className="mb-4">
-            <label className="block text-gray-300 mb-2">Descrição</label>
+          <div>
+            <label className="block text-sm font-medium mb-2">
+              Descrição *
+            </label>
             <textarea
               name="description"
-              value={party.description}
+              value={formData.description}
               onChange={handleChange}
-              rows="4"
-              className="w-full px-4 py-2 bg-[#0f0f23] border border-purple-500/30 rounded-lg text-white focus:outline-none focus:border-purple-500"
+              required
+              rows={4}
+              className="w-full px-4 py-3 bg-[var(--color-background)] border border-[var(--color-border)] rounded-lg focus:outline-none focus:border-[var(--color-party-purple)] transition-colors resize-none"
             />
           </div>
 
-          <div className="mb-4">
-            <label className="block text-gray-300 mb-2">
-              Orçamento (R$) <span className="text-red-400">*</span>
+          <div>
+            <label className="block text-sm font-medium mb-2">
+              Orçamento (R$) *
             </label>
             <input
               type="number"
               name="budget"
-              value={party.budget}
+              value={formData.budget}
               onChange={handleChange}
+              required
               min="0"
               step="0.01"
-              className="w-full px-4 py-2 bg-[#0f0f23] border border-purple-500/30 rounded-lg text-white focus:outline-none focus:border-purple-500"
-              required
+              className="w-full px-4 py-3 bg-[var(--color-background)] border border-[var(--color-border)] rounded-lg focus:outline-none focus:border-[var(--color-party-purple)] transition-colors"
             />
           </div>
 
-          <div className="mb-6">
-            <label className="block text-gray-300 mb-2">URL da Imagem</label>
+          <div>
+            <label className="block text-sm font-medium mb-2">
+              URL da Imagem *
+            </label>
             <input
               type="url"
               name="image"
-              value={party.image}
+              value={formData.image}
               onChange={handleChange}
-              className="w-full px-4 py-2 bg-[#0f0f23] border border-purple-500/30 rounded-lg text-white focus:outline-none focus:border-purple-500"
-              placeholder="https://exemplo.com/imagem.jpg"
+              required
+              className="w-full px-4 py-3 bg-[var(--color-background)] border border-[var(--color-border)] rounded-lg focus:outline-none focus:border-[var(--color-party-purple)] transition-colors"
             />
+            {formData.image && (
+              <div className="mt-4">
+                <img
+                  src={formData.image || "/placeholder.svg"}
+                  alt="Preview"
+                  className="w-full h-48 object-cover rounded-lg"
+                  onError={(e) => {
+                    e.target.style.display = "none";
+                  }}
+                />
+              </div>
+            )}
           </div>
+        </div>
 
-          <div className="flex gap-4">
-            <button
-              type="submit"
-              disabled={saving}
-              className="flex-1 bg-purple-600 hover:bg-purple-700 text-white py-3 rounded-lg font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {saving ? "Salvando..." : "Salvar Alterações"}
-            </button>
-            <button
-              type="button"
-              onClick={() => navigate(`/parties/${id}`)}
-              className="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-3 rounded-lg font-semibold transition-colors"
-            >
-              Cancelar
-            </button>
+        <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl p-8 space-y-6">
+          <h2 className="text-2xl font-bold">Serviços</h2>
+
+          {formData.services.length > 0 && (
+            <div className="space-y-3">
+              <h3 className="font-medium text-[var(--color-text-secondary)]">
+                Serviços Selecionados:
+              </h3>
+              {formData.services.map((service) => (
+                <div
+                  key={service._id}
+                  className="flex items-center justify-between p-4 bg-[var(--color-background)] rounded-lg"
+                >
+                  <div className="flex items-center gap-3">
+                    {service.image && (
+                      <img
+                        src={service.image || "/placeholder.svg"}
+                        alt={service.name}
+                        className="w-12 h-12 object-cover rounded"
+                      />
+                    )}
+                    <div>
+                      <div className="font-medium">{service.name}</div>
+                      <div className="text-sm text-[var(--color-party-yellow)]">
+                        R$ {service.price?.toLocaleString("pt-BR")}
+                      </div>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => removeService(service._id)}
+                    className="p-2 text-red-500 hover:bg-red-500/10 rounded-lg transition-colors"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <div>
+            <h3 className="font-medium text-[var(--color-text-secondary)] mb-3">
+              Serviços Disponíveis:
+            </h3>
+            <div className="grid md:grid-cols-2 gap-3">
+              {availableServices.map((service) => (
+                <button
+                  key={service._id}
+                  type="button"
+                  onClick={() => addService(service)}
+                  disabled={formData.services.find(
+                    (s) => s._id === service._id
+                  )}
+                  className="flex items-center gap-3 p-4 bg-[var(--color-background)] border border-[var(--color-border)] rounded-lg hover:border-[var(--color-party-purple)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-left"
+                >
+                  {service.image && (
+                    <img
+                      src={service.image || "/placeholder.svg"}
+                      alt={service.name}
+                      className="w-12 h-12 object-cover rounded"
+                    />
+                  )}
+                  <div className="flex-1">
+                    <div className="font-medium">{service.name}</div>
+                    <div className="text-sm text-[var(--color-party-yellow)]">
+                      R$ {service.price?.toLocaleString("pt-BR")}
+                    </div>
+                  </div>
+                  <Plus className="w-5 h-5 text-[var(--color-party-purple)]" />
+                </button>
+              ))}
+            </div>
           </div>
-        </form>
-      </div>
-    </Layout>
+        </div>
+
+        <div className="flex gap-4">
+          <button
+            type="submit"
+            className="flex-1 py-3 bg-gradient-to-r from-[var(--color-party-purple)] to-[var(--color-party-pink)] text-white rounded-lg font-medium hover:scale-105 transition-transform"
+          >
+            Salvar Alterações
+          </button>
+          <Link
+            to={`/parties/${id}`}
+            className="px-6 py-3 bg-[var(--color-surface-hover)] border border-[var(--color-border)] text-[var(--color-text-primary)] rounded-lg font-medium hover:bg-[var(--color-background)] transition-colors"
+          >
+            Cancelar
+          </Link>
+        </div>
+      </form>
+    </div>
   );
 }
