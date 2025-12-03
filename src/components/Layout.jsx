@@ -1,18 +1,20 @@
-import { Link, useLocation } from "react-router-dom"
-import { PartyPopper, Sparkles, Home } from "lucide-react"
+import { Link, useLocation } from "react-router-dom";
+import { PartyPopper, Sparkles, Home } from "lucide-react";
 
 export default function Layout({ children }) {
-  const location = useLocation()
+  const location = useLocation();
 
   const isActive = (path) => {
-    return location.pathname === path || location.pathname.startsWith(path + "/")
-  }
+    return (
+      location.pathname === path || location.pathname.startsWith(path + "/")
+    );
+  };
 
   return (
-    <div className="min-h-screen">
+    <div className="flex flex-col min-h-screen">
       {/* Header */}
       <header className="bg-[var(--color-surface)] border-b border-[var(--color-border)] sticky top-0 z-50 backdrop-blur-sm bg-opacity-95">
-        <div className="container mx-auto px-4">
+        <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <Link to="/" className="flex items-center gap-2 group">
@@ -65,16 +67,17 @@ export default function Layout({ children }) {
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-8">{children}</main>
+      <main className="flex-grow">{children}</main>
 
       {/* Footer */}
-      <footer className="bg-[var(--color-surface)] border-t border-[var(--color-border)] mt-16">
+      <footer className="bg-[var(--color-surface)] border-t border-[var(--color-border)] mt-auto">
         <div className="container mx-auto px-4 py-6">
           <p className="text-center text-[var(--color-text-muted)] text-sm">
-            © 2025 Party Time. Transformando momentos em memórias inesquecíveis ✨
+            © 2025 Party Time. Transformando momentos em memórias inesquecíveis
+            ✨
           </p>
         </div>
       </footer>
     </div>
-  )
+  );
 }
