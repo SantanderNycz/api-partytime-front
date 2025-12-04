@@ -41,7 +41,7 @@ export default function CreateService() {
       <div>
         <Link
           to="/services"
-          className="inline-flex items-center gap-2 text-[var(--color-text-secondary)] hover:text-[var(--color-party-purple)] transition-colors mb-4"
+          className="mt-4 inline-flex items-center gap-2 text-[var(--color-text-secondary)] hover:text-[var(--color-party-purple)] transition-colors mb-4"
         >
           <ArrowLeft className="w-4 h-4" />
           Voltar
@@ -119,7 +119,7 @@ export default function CreateService() {
           </div>
         </div>
 
-        <div className="flex gap-4">
+        <div className="mb-4 flex gap-4">
           <button
             type="submit"
             className="flex-1 py-3 bg-gradient-to-r from-[var(--color-party-blue)] to-[var(--color-party-purple)] text-white rounded-lg font-medium hover:scale-105 transition-transform"

@@ -1,74 +1,46 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const API_URL = "https://api-partytime-back.onrender.com/api";
+
+// Função auxiliar para obter headers com token
+export const getAuthHeaders = () => {
+  const token = localStorage.getItem("token");
+
+  return {
+    "Content-Type": "application/json",
+    ...(token && { Authorization: `Bearer ${token}` }),
+  };
+};
+
+// Função auxiliar para fazer requisições autenticadas
+export const fetchWithAuth = async (url, options = {}) => {
+  const response = await fetch(`${API_URL}${url}`, {
+    ...options,
+    headers: {
+      ...getAuthHeaders(),
+      ...options.headers,
+    },
+  });
+
+  // Se retornar 401, token expirou ou é inválido
+  if (response.status === 401) {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    window.location.href = "/login";
+  }
+
+  return response;
+};
 
 export const api = {
   getParties: async () => {
-    const response = await fetch(`${API_BASE_URL}/parties`);
-    return response.json();
-  },
-
-  getParty: async (id) => {
-    const response = await fetch(`${API_BASE_URL}/parties/${id}`);
-    return response.json();
-  },
-
-  createParty: async (data) => {
-    const response = await fetch(`${API_BASE_URL}/parties`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
-    return response.json();
-  },
-
-  updateParty: async (id, data) => {
-    const response = await fetch(`${API_BASE_URL}/parties/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
-    return response.json();
+    const res = await fetchWithAuth("/parties");
+    return res.json();
   },
 
   deleteParty: async (id) => {
-    const response = await fetch(`${API_BASE_URL}/parties/${id}`, {
+    await fetchWithAuth(`/parties/${id}`, {
       method: "DELETE",
     });
-    return response.json();
-  },
-
-  // Services
-  getServices: async () => {
-    const response = await fetch(`${API_BASE_URL}/services`);
-    return response.json();
-  },
-
-  getService: async (id) => {
-    const response = await fetch(`${API_BASE_URL}/services/${id}`);
-    return response.json();
-  },
-
-  createService: async (data) => {
-    const response = await fetch(`${API_BASE_URL}/services`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
-    return response.json();
-  },
-
-  updateService: async (id, data) => {
-    const response = await fetch(`${API_BASE_URL}/services/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
-    return response.json();
-  },
-
-  deleteService: async (id) => {
-    const response = await fetch(`${API_BASE_URL}/services/${id}`, {
-      method: "DELETE",
-    });
-    return response.json();
   },
 };
+
+export default API_URL;

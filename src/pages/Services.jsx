@@ -1,61 +1,65 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { Link } from "react-router-dom"
-import { Plus, Sparkles, DollarSign, Trash2, Edit } from "lucide-react"
-import { api } from "../config/api"
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { Plus, Sparkles, DollarSign, Trash2, Edit } from "lucide-react";
+import { api } from "../config/api";
 
 export default function Services() {
-  const [services, setServices] = useState([])
-  const [loading, setLoading] = useState(true)
+  const [services, setServices] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadServices()
-  }, [])
+    loadServices();
+  }, []);
 
   const loadServices = async () => {
     try {
-      const data = await api.getServices()
-      setServices(data)
+      const data = await api.getServices();
+      setServices(data);
     } catch (error) {
-      console.error("Erro ao carregar serviços:", error)
+      console.error("Erro ao carregar serviços:", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleDelete = async (id) => {
     if (window.confirm("Tem certeza que deseja excluir este serviço?")) {
       try {
-        await api.deleteService(id)
-        setServices(services.filter((service) => service._id !== id))
+        await api.deleteService(id);
+        setServices(services.filter((service) => service._id !== id));
       } catch (error) {
-        console.error("Erro ao deletar serviço:", error)
+        console.error("Erro ao deletar serviço:", error);
       }
     }
-  }
+  };
 
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-[var(--color-party-purple)] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-[var(--color-text-secondary)]">Carregando serviços...</p>
+          <p className="text-[var(--color-text-secondary)]">
+            Carregando serviços...
+          </p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold mb-2">Catálogo de Serviços</h1>
-          <p className="text-[var(--color-text-secondary)]">Gerencie os serviços disponíveis para suas festas</p>
+          <h1 className="ml-4 text-3xl font-bold">Catálogo de Serviços</h1>
+          <p className="ml-4 text-[var(--color-text-secondary)]">
+            Gerencie os serviços disponíveis para suas festas
+          </p>
         </div>
         <Link
           to="/services/create"
-          className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-[var(--color-party-blue)] to-[var(--color-party-purple)] text-white rounded-lg font-medium hover:scale-105 transition-transform"
+          className="m-4 inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-[var(--color-party-blue)] to-[var(--color-party-purple)] text-white rounded-lg font-medium hover:scale-105 transition-transform"
         >
           <Plus className="w-5 h-5" />
           Novo Serviço
@@ -63,9 +67,12 @@ export default function Services() {
       </div>
 
       {services.length === 0 ? (
-        <div className="text-center py-12 bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)]">
+        // cards serviços
+        <div className="m-2 text-center py-12 bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)]">
           <Sparkles className="w-16 h-16 text-[var(--color-text-muted)] mx-auto mb-4" />
-          <h3 className="text-xl font-semibold mb-2">Nenhum serviço cadastrado</h3>
+          <h3 className="text-xl font-semibold mb-2">
+            Nenhum serviço cadastrado
+          </h3>
           <p className="text-[var(--color-text-secondary)] mb-4">
             Adicione serviços ao catálogo para usar em suas festas!
           </p>
@@ -78,7 +85,7 @@ export default function Services() {
           </Link>
         </div>
       ) : (
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="m-2 grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {services.map((service) => (
             <div
               key={service._id}
@@ -93,8 +100,12 @@ export default function Services() {
               </div>
 
               <div className="p-6 space-y-4">
-                <h3 className="text-xl font-bold line-clamp-1">{service.name}</h3>
-                <p className="text-[var(--color-text-secondary)] text-sm line-clamp-2">{service.description}</p>
+                <h3 className="text-xl font-bold line-clamp-1">
+                  {service.name}
+                </h3>
+                <p className="text-[var(--color-text-secondary)] text-sm line-clamp-2">
+                  {service.description}
+                </p>
 
                 <div className="flex items-center gap-2">
                   <DollarSign className="w-5 h-5 text-[var(--color-party-yellow)]" />
@@ -124,5 +135,5 @@ export default function Services() {
         </div>
       )}
     </div>
-  )
+  );
 }

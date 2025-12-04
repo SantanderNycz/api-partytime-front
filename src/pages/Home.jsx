@@ -3,7 +3,7 @@ import { PartyPopper, Sparkles, Plus, TrendingUp } from "lucide-react";
 
 export default function Home() {
   return (
-    <div className="space-y-12">
+    <div className="space-y-8">
       {/* Hero Section */}
       <section className="justify-center items-center text-center py-12">
         <div className="inline-flex items-center gap-2 mb-4">
@@ -36,7 +36,7 @@ export default function Home() {
       </section>
 
       {/* Features Grid */}
-      <section className="grid md:grid-cols-2 gap-6">
+      <section className="m-8 grid md:grid-cols-2 gap-6">
         <Link
           to="/parties"
           className="group bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl p-8 hover:border-[var(--color-party-purple)] transition-all hover:scale-105"

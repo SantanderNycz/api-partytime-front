@@ -1,49 +1,59 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { Link } from "react-router-dom"
-import { Plus, Calendar, DollarSign, User, Trash2, Edit, Eye } from "lucide-react"
-import { api } from "../config/api"
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import {
+  Plus,
+  Calendar,
+  DollarSign,
+  User,
+  Trash2,
+  Edit,
+  Eye,
+} from "lucide-react";
+import { api } from "../config/api";
 
 export default function Parties() {
-  const [parties, setParties] = useState([])
-  const [loading, setLoading] = useState(true)
+  const [parties, setParties] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadParties()
-  }, [])
+    loadParties();
+  }, []);
 
   const loadParties = async () => {
     try {
-      const data = await api.getParties()
-      setParties(data)
+      const data = await api.getParties();
+      setParties(data);
     } catch (error) {
-      console.error("Erro ao carregar festas:", error)
+      console.error("Erro ao carregar festas:", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleDelete = async (id) => {
     if (window.confirm("Tem certeza que deseja excluir esta festa?")) {
       try {
-        await api.deleteParty(id)
-        setParties(parties.filter((party) => party._id !== id))
+        await api.deleteParty(id);
+        setParties(parties.filter((party) => party._id !== id));
       } catch (error) {
-        console.error("Erro ao deletar festa:", error)
+        console.error("Erro ao deletar festa:", error);
       }
     }
-  }
+  };
 
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-[var(--color-party-purple)] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-[var(--color-text-secondary)]">Carregando festas...</p>
+          <p className="text-[var(--color-text-secondary)]">
+            Carregando festas...
+          </p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -51,12 +61,14 @@ export default function Parties() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold mb-2">Minhas Festas</h1>
-          <p className="text-[var(--color-text-secondary)]">Gerencie todas as suas festas e eventos</p>
+          <h1 className="ml-4 text-3xl font-bold m-2">Minhas Festas</h1>
+          <p className="ml-4 text-[var(--color-text-secondary)]">
+            Gerencie todas as suas festas e eventos
+          </p>
         </div>
         <Link
           to="/parties/create"
-          className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-[var(--color-party-purple)] to-[var(--color-party-pink)] text-white rounded-lg font-medium hover:scale-105 transition-transform"
+          className="mr-4 inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-[var(--color-party-purple)] to-[var(--color-party-pink)] text-white rounded-lg font-medium hover:scale-105 transition-transform"
         >
           <Plus className="w-5 h-5" />
           Nova Festa
@@ -67,8 +79,12 @@ export default function Parties() {
       {parties.length === 0 ? (
         <div className="text-center py-12 bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)]">
           <Calendar className="w-16 h-16 text-[var(--color-text-muted)] mx-auto mb-4" />
-          <h3 className="text-xl font-semibold mb-2">Nenhuma festa cadastrada</h3>
-          <p className="text-[var(--color-text-secondary)] mb-4">Comece criando sua primeira festa!</p>
+          <h3 className="text-xl font-semibold mb-2">
+            Nenhuma festa cadastrada
+          </h3>
+          <p className="text-[var(--color-text-secondary)] mb-4">
+            Comece criando sua primeira festa!
+          </p>
           <Link
             to="/parties/create"
             className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--color-party-purple)] text-white rounded-lg font-medium hover:scale-105 transition-transform"
@@ -78,7 +94,8 @@ export default function Parties() {
           </Link>
         </div>
       ) : (
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        // cards das festas
+        <div className="m-4 grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {parties.map((party) => (
             <div
               key={party._id}
@@ -96,8 +113,12 @@ export default function Parties() {
 
               {/* Content */}
               <div className="p-6 space-y-4">
-                <h3 className="text-xl font-bold line-clamp-1">{party.title}</h3>
-                <p className="text-[var(--color-text-secondary)] text-sm line-clamp-2">{party.description}</p>
+                <h3 className="text-xl font-bold line-clamp-1">
+                  {party.title}
+                </h3>
+                <p className="text-[var(--color-text-secondary)] text-sm line-clamp-2">
+                  {party.description}
+                </p>
 
                 <div className="space-y-2">
                   <div className="flex items-center gap-2 text-sm text-[var(--color-text-secondary)]">
@@ -145,5 +166,5 @@ export default function Parties() {
         </div>
       )}
     </div>
-  )
+  );
 }

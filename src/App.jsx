@@ -1,13 +1,13 @@
-import { Routes, Route } from "react-router-dom"
-import Layout from "./components/Layout"
-import Home from "./pages/Home"
-import Parties from "./pages/Parties"
-import PartyDetails from "./pages/PartyDetails"
-import CreateParty from "./pages/CreateParty"
-import EditParty from "./pages/EditParty"
-import Services from "./pages/Services"
-import CreateService from "./pages/CreateService"
-import EditService from "./pages/EditService"
+import { Routes, Route } from "react-router-dom";
+import Layout from "./components/Layout";
+import Home from "./pages/Home";
+import Parties from "./pages/Parties";
+import PartyDetails from "./pages/PartyDetails";
+import CreateParty from "./pages/CreateParty";
+import EditParty from "./pages/EditParty";
+import Services from "./pages/Services";
+import CreateService from "./pages/CreateService";
+import EditService from "./pages/EditService";
 
 function App() {
   return (
@@ -23,7 +23,7 @@ function App() {
         <Route path="/services/edit/:id" element={<EditService />} />
       </Routes>
     </Layout>
-  )
+  );
 }
 
-export default App
+export default App;
